@@ -232,45 +232,11 @@ sanitizeInput = (context, callback) ->
 
 
 publishEvent = (context, callback) ->
-  # compose the json for the event
-  # clone the template context, and remove extra crap. small message please.
-  ctx = JSON.parse(JSON.stringify(context.templateContext))
-  delete ctx['connection']
-  delete ctx['host']
-  delete ctx['cache-control']
-  delete ctx['sec-fetch-mode']
-  delete ctx['sec-fetch-user']
-  delete ctx['sec-fetch-site']
-  delete ctx['cookie']
-  delete ctx['upgrade-insecure-requests']
-  delete ctx['user-agent']
-  delete ctx['accept']
-  delete ctx['accept-encoding']
-  delete ctx['accept-language']
+  
+  msg = eventPub.EventPublisher.buildMessageFromContext(context)
+  pub = new eventPub.EventPublisher
+  pub.publish(msg)
 
-  #Extract the template name and directory path to construct event type string
-  offset = context.templateName.lastIndexOf('/')
-  theName = context.templateName.substr(offset + 1, context.templateName.length)
-  thePrefix = ''
-  thePrefix = ".#{context.templateName.substr(0, offset)}".replace('/', '.') if offset > 0
-
-  event = [
-    {
-      id: uuid().toString(),
-      template: theName,
-      eventType: 'glg.epiquery.post' + thePrefix,
-      dataVersion: '1.0',
-      params: ctx
-    }
-  ]
-  if config.isPublishEnabled()
-    pub = new eventPub.EventPublisher
-    pub.publish(event)
-
-  else
-    #If in development mode, and publish is disabled, emit to the console instead
-    if config.isDevelopmentMode()
-      console.log JSON.stringify(event)
   callback null, context
 
 queryRequestHandler = (context) ->
