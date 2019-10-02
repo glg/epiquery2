@@ -59,7 +59,6 @@ class EventPublisher
     ]
 
     params = Object.keys(eventMsg[0].params)
-    log.info(params)
 
     #slug values
     for target in badFieldNames
@@ -90,7 +89,6 @@ class EventPublisher
       #is this template on the naughty list?
       if !EventPublisher.isDangerTemplate(eventMsg)
         this.scrub(eventMsg)
-        log.info JSON.stringify eventMsg
 
         @publisher.send(eventMsg).catch((err) => 
           log.error err
