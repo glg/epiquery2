@@ -49,7 +49,7 @@ class EventPublisher
     ]
 
   scrub: (eventMsg) =>
-    #the data in this lsit should not be broadcast in the open
+    #the data in this list should not be broadcast in the open
     badFieldNames = [
       'ssn',
       'tax_id',
@@ -57,14 +57,14 @@ class EventPublisher
       'bank_routing',
       'bank_swift'
     ]
-
+    #iterate through the params property names
     params = Object.keys(eventMsg[0].params)
 
     #slug values
-    for target in badFieldNames
+    for bad in badFieldNames
       for param in params
         #if it starts with a taboo name, slug it.
-        if target.startsWith(param)
+        if param.toLowerCase().startsWith(bad)
           log.info "Potential sensitive data, slugging value: #{param}"
           eventMsg[0][param] = '***********'
 
