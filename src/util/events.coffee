@@ -63,10 +63,11 @@ class EventPublisher
     #slug values
     for target in badFieldNames
       for param in params
-        if param == target
+        #if it starts with a taboo name, slug it.
+        if target.startsWith(param)
           log.info "Potential sensitive data, slugging value: #{param}"
           eventMsg[0][param] = '***********'
-    #return eventMsg
+
 
   @isDangerTemplate: (eventMsg) =>
     #this list will grow as needed.
