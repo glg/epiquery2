@@ -1,4 +1,4 @@
-FROM node:5.5.0
+FROM node:5.5.0-alpine
 
 RUN npm install -g drakov
 
