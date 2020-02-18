@@ -21,14 +21,12 @@ RUN printf "deb http://archive.debian.org/debian/ jessie main\ndeb-src http://ar
     && pip install awscli \
     && npm install -g igroff/difftest-runner coffee-script
 
-ADD ./package.json /var/app/package.json
+ADD . /var/app
 WORKDIR /var/app
 RUN npm install
-ADD . /var/app
 RUN mkdir /var/config
 
-RUN make build
 
 #ENTRYPOINT ["/bin/bash"]
 #CMD ["./epistream-docker-secrets-entrypoint.sh"]
-CMD ["./epistream.coffee"]
+CMD ["./node_modules/.bin/supervisor", "-e", ".litcoffee|.coffee|.js",  "./epistream.coffee"]
