@@ -1,7 +1,6 @@
 #! /usr/bin/env ./node_modules/.bin/coffee
 # vim:ft=coffee
 
-newrelic  = require 'newrelic'
 cluster   = require 'cluster'
 express   = require 'express'
 _         = require 'underscore'
@@ -74,7 +73,6 @@ app.get '/stats', (req, res) ->
 httpRequestHandler = (req, res) ->
   clientId = req.param 'client_id'
   c = new Context()
-  newrelic.setTransactionName(req.path.replace(/^\/+/g, ''))
   c.queryId = req.param 'queryId'
   _.extend c, httpClient.getQueryRequestInfo(req, !!apiKey)
   # Check that the client supplied key matches server key
@@ -82,12 +80,10 @@ httpRequestHandler = (req, res) ->
     if !(c.clientKey == apiKey)
       log.error "Unauthorized HTTP Access Attempted from IP: #{req.connection.remoteAddress}"
       log.error "Unauthorized Context: #{JSON.stringify(c.templateContext)}"
-      newrelic.noticeError(new Error("Unauthorized Socket Access Attempted"), c)
       res.send error: "Unauthorized Access"
       return
 
   if c.connectionName and not config.connections[c.connectionName]
-    newrelic.noticeError(new Error("Unable to find connection by name"), c)
     res.send error: "unable to find connection by name '#{c.connectionName}'"
     return
   httpClient.attachResponder c, res
@@ -96,13 +92,11 @@ httpRequestHandler = (req, res) ->
 
 socketServer.on 'connection', (conn) ->
   conn.on 'data', (message) ->
-    newrelic.startWebTransaction(message.templateName)
     if apiKey
       if !~ conn.url.indexOf apiKey
         conn.close() 
         log.error "Unauthorized Socket Access Attempted from IP: #{conn.remoteAddress}"
         log.error "Unauthorized Context: #{JSON.stringify(message)}"
-        newrelic.noticeError(new Error("Unauthorized Socket Access Attempted"), message)
         return
 
     log.debug "inbound message #{message}"
@@ -119,20 +113,16 @@ socketServer.on 'connection', (conn) ->
       requestHeaders: conn.headers
     ctxParms.debug if message.debug
     context = new Context(ctxParms)
-    newrelic.setTransactionName(context.templateName.replace(/^\/+/g, ''))
-    newrelic.addCustomAttributes(context)
     log.debug "[q:#{context.queryId}] starting processing"
     sockjsClient.attachResponder(context, conn)
     queryRequestHandler(context)
   conn.on 'error', (e) ->
     log.error "error on connection", e
-    newrelic.noticeError(e)
   conn.on 'close', () ->
     log.debug "sockjs client disconnected"
 
 socketServer.on 'error', (e) ->
   log.error "error on socketServer", e
-  newrelic.noticeError(e)
 
 app.get /\/(.+)$/, httpRequestHandler
 app.post /\/(.+)$/, httpRequestHandler
@@ -147,6 +137,8 @@ prefix = {prefix: '/sockjs'}
 prefix.prefix = "/#{apiKey}/sockjs" if apiKey && config.urlBasedApiKey
 
 socketServer.installHandlers(server, prefix)
+
+console.log "sandwich"
 
 Cluster = require 'cluster2'
 if config.isDevelopmentMode() and config.forks is 1
