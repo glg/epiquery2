@@ -138,8 +138,6 @@ prefix.prefix = "/#{apiKey}/sockjs" if apiKey && config.urlBasedApiKey
 
 socketServer.installHandlers(server, prefix)
 
-console.log "sandwich"
-
 Cluster = require 'cluster2'
 if config.isDevelopmentMode() and config.forks is 1
   log.warn  "********************************************************************************"
