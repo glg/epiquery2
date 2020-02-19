@@ -1,0 +1,1 @@
+{"results":[[{"queryParamText":"(@myParam1 numeric(18, 0), @myParam2 numeric(12, 2), @myParam3 numeric(8, 4), @myParam5 decimal(12, 2), @myParam6 decimal(8, 4))"}]]}

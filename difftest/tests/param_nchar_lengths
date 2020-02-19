@@ -1,0 +1,3 @@
+#! /usr/bin/env bash
+# vi: ft=sh
+curl -s "http://${EPI_TEST_SERVER}:8080/simple/mssql/test/template_parameter_nchar_type_lengths.sql" -H 'content-type: application/json' --data-binary @difftest/test-data/nchar_params.json
