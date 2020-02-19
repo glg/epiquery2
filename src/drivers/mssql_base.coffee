@@ -229,14 +229,36 @@ class MSSQLDriver extends events.EventEmitter
           tediousType = lowerCaseTediousTypeMap[lowerCaseTypeName]
           throw new TypeError("Unknown parameter type (#{param.type}) for #{param.varName}") if not tediousType
           transformedValue = tediousType.transformValue(param.value)
-          log.debug "adding parameter #{param.varName}, length (#{transformedValue?.length}), value (#{param.value}) as type #{tediousType.name} with lowerCaseTypeName #{lowerCaseTypeName}, transformed value: #{transformedValue}"
           paramOptions = {}
           # we entered into this with the ability to not specify length, precision or scale in our
           # param declarations, so we're gonna start by fixing nvarchar and varchar lengths if they're
           # under a threshold, then we'll come back and add first class support for length
-          if lowerCaseTypeName is 'varchar' or lowerCaseTypeName is 'nvarchar'
-            paramOptions.length = param.typeLength
+          if lowerCaseTypeName is 'varchar' or lowerCaseTypeName is 'nvarchar' or lowerCaseTypeName is 'varbinary'
+            # if we have a parameter length specified we will use that, ELSE we'll fall back to legacy behavior
+            if param.typeLength
+              paramOptions.length = param.typeLength
+            else
+              # if we have a value, we want to set the param length to 255 UNLESS it's greater
+              # so we don't truncate anything
+              # there is a check here for no transformed value. if we have no value, thus our parameter value is null,
+              # so we'll just fix all our char lengths to 255 unless we have a value and it's length is greater than 255
+              if transformedValue and transformedValue.length > 255
+                paramOptions.length = 8001
+              else
+                paramOptions.length = 255
+          else if lowerCaseTypeName in ["time", "datetime2", "datetimeoffset"]
+            # these are the types that support only a scale value, and since they support only a scale value 
+            # that value will be assigned to both precision and scale (simply due to the way we parse types)
+            # we'll use the length
+            paramOptions.scale = param.typeLength
+          else if lowerCaseTypeName in ["decimal", "numeric"]
+            # these are our types that upport a precision and _optionally_ a scale we will assume that the parsing
+            # has worked correctly and we'll only have a scale if we have a precision however we won't validate that fact
+            paramOptions.precision = param.precision
+            if param.scale
+              paramOptions.scale = param.scale
 
+          log.debug "adding parameter #{param.varName}, length (#{transformedValue?.length}), value (#{param.value}) as type #{tediousType.name} with lowerCaseTypeName #{lowerCaseTypeName}, transformed value: #{transformedValue}\n\tOptions: #{JSON.stringify(paramOptions)}"
           request.addParameter(param.varName, tediousType, transformedValue, paramOptions)
         @conn.execSql request
       catch e
