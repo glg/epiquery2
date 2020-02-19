@@ -26,7 +26,4 @@ WORKDIR /var/app
 RUN npm install
 RUN mkdir /var/config
 
-
-#ENTRYPOINT ["/bin/bash"]
-#CMD ["./epistream-docker-secrets-entrypoint.sh"]
-CMD ["./node_modules/.bin/supervisor", "-e", ".litcoffee|.coffee|.js",  "./epistream.coffee"]
+CMD ["./node_modules/.bin/supervisor", "-e", "litcoffee,coffee",  "./epistream.coffee"]
