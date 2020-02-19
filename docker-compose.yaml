@@ -69,7 +69,7 @@ services:
       - NEW_RELIC_LICENSE_KEY='key-goes-here'
       - NEW_RELIC_LABELS=ENVIRONMENT:LOCAL;
       - ENABLE_TEMPLATE_ACLS=DISABLED
-      - DEBUG=false
+      - DEBUG=true
       - FORKS=1
     depends_on:
       - mysql 
