@@ -3,7 +3,6 @@ executionMasks:
   a_valid_bitmask: 1
 
 --@myParam1 decimal(2,4)
-
 */
   select 
     -- this relies on the knowledge that epiquery prepends a comment to the exeucting query that contains the
