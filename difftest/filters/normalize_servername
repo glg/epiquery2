@@ -1,2 +1,2 @@
 #! /usr/bin/env bash
-cat | sed -E -e 's["serverName": ".*",[servername[g'
+cat | sed -E -e 's["serverName": ?".*",[servername[g'

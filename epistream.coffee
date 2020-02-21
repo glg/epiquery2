@@ -142,6 +142,7 @@ Cluster = require 'cluster2'
 if config.isDevelopmentMode() and config.forks is 1
   log.warn  "********************************************************************************"
   log.warn "epiquery is running in development mode with a single fork specified, this results in a single process epiquery which will BE SLOW"
+  log.warn "running on port ", config.port
   log.warn "********************************************************************************"
   cluster = new Cluster(port: config.port, cluster:false, timeout:config.httpRequestTimeoutInSeconds * 1000)
 else
