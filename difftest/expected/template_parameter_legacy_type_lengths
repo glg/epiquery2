@@ -1,0 +1,1 @@
+{"results":[[{"queryParamText":"(@shortVarchar varchar(255), @longVarchar varchar(max), @shortNVarchar nvarchar(255), @longNVarchar nvarchar(max), @aDecimal decimal(1, 0), @aNumeric numeric(1, 0), @aDateTime2 datetime2(0), @aTime time(0), @aDateTimeOffset datetimeoffset(0))"}]]}
