@@ -1,3 +1,0 @@
-#! /usr/bin/env bash
-# remove anything like a log entry
-cat | sed -e "s[$(pwd)[REPOROOT[g"
