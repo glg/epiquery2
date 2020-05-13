@@ -1,4 +1,5 @@
 # vim:ft=coffee
+newrelic    = require 'newrelic'
 async       = require 'async'
 log         = require './util/log.coffee'
 _           = require 'lodash-contrib'
@@ -71,6 +72,7 @@ selectConnection = (context, callback) ->
     if not context.connection
       msg = "unable to find connection '#{context.connectionName}'"
       context.emit 'error', msg
+      newrelic.noticeError(new Error(msg), context)
       return callback msg
   else
     context.connection = connectionConfig
@@ -176,6 +178,7 @@ executeQuery = (context, callback) ->
     context.Stats.endDate = new Date()
     if err
       log.error "[q:#{context.queryId}, t:#{context.templateName}] error executing query #{err}"
+      newrelic.noticeError(err, context)
       context.emit 'error', err, data
 
     context.emit 'endquery', data
@@ -238,6 +241,7 @@ queryRequestHandler = (context) ->
   (err, results) ->
     if err
       log.error "[q:#{context.queryId}, t:#{context.templateName}] queryRequestHandler Error: #{err}"
+      newrelic.noticeError(err, context)
       context.emit 'error', err
     context.emit 'completequeryexecution'
 
