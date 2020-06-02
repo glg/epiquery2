@@ -1,0 +1,16 @@
+drop table if exists #pants;
+Declare @RowNo int =1;
+;with ROWCTE as  
+(  
+  SELECT @RowNo as ROWNO, newid()  as uid1, newid() as uid2, newid() as uid3
+        UNION ALL  
+  SELECT  ROWNO+1, newid() as uid1, newid() as uid2, newid() as uid3
+    FROM  ROWCTE  
+  WHERE RowNo < 1000
+)
+SELECT * INTO #pants FROM ROWCTE OPTION(MAXRECURSION 10000)
+select * from #pants
+union
+select * from #pants
+union 
+SELECT 3, newid() as uid1, newid() as uid2, newid() as uid3
