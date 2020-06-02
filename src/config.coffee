@@ -43,6 +43,8 @@ if process.env.ALLOWED_TEMPLATE_PATHS
 else
   allowedTemplates = null
 
+ASYNC_REQUEST_STORAGE_BUCKET=process.env.ASYNC_REQUEST_STORAGE_BUCKET || null
+
 config =
   port: PORT
   templateDirectory: TEMPLATE_DIRECTORY
@@ -59,5 +61,6 @@ config =
   httpRequestTimeoutInSeconds: HTTP_REQUEST_TIMEOUT_IN_SECONDS
   enableTemplateAcls: ENABLE_TEMPLATE_ACLS
   epiScreamerUrl: process.env.EPI_SCREAMER_URL
+  asyncRequestStorageBucket: ASYNC_REQUEST_STORAGE_BUCKET
 
 module.exports = config

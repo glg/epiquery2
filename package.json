@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "async": "0.2.9",
+    "aws-sdk": "2.686.0",
     "awesome-websocket": "0.0.25",
     "browserify": "6.2.0",
     "circuit-breaker": "glg/circuit-breaker.git#v1.0.1",

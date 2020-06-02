@@ -10,6 +10,7 @@ templates   = require './templates.coffee'
 transformer = require './transformer.coffee'
 https       = require 'https'
 url         = require 'url'
+aws         = require 'aws-sdk'
 
 breaker     = require 'circuit-breaker'
 breaker_config = {
@@ -47,6 +48,9 @@ setupContext = (context, callback) ->
   # this query identifier is used by the client to corellate events from
   # simultaneously executing query requests
   context.queryId = context.queryId || "#{process.pid}_#{queryRequestCounter++}"
+  # We start with the assumption that this will NOT be an asynchronous request,
+  # this can be changed based on the configuration of the selected connection
+  context.enqueueQueryRequest = false
   callback null, context
 
 initializeRequest = (context, callback) ->
@@ -74,6 +78,9 @@ selectConnection = (context, callback) ->
       return callback msg
   else
     context.connection = connectionConfig
+  # mark our context as async if the connection is specified as such
+  if context.connection.async
+    context.enqueueQueryRequest = true 
   context.driver = core.selectDriver context.connection
 
   # Replica check here...
@@ -170,7 +177,10 @@ testExecutionPermissions = (context, callback) ->
   log.debug "Execution denied by acl: Headers %j template config: %j", context.requestHeaders, context.templateConfig
   return callback(new Error("Execution denied by acl"), context)
 
-executeQuery = (context, callback) ->
+executeQueryIfSycnhronous = (context, callback) ->
+  # if the request should not be executed now, but instead queued we'll simply
+  # skip this (execution) step
+  return callback(null, context) if context.enqueueQueryRequest
   context.emit 'beginqueryexecution'
   queryCompleteCallback = (err, data) ->
     context.Stats.endDate = new Date()
@@ -189,7 +199,16 @@ executeQuery = (context, callback) ->
     connection: context.connection.name
   }
 
+enqueueQueryRequest = (context, callback) ->
+  # We only handle this request (sticking into the execution queue) if the 
+  # request has been marked as such, otherwise we skip this step
+  return callback(null, context) unless context.enqueueQueryRequest
+
+
 collectStats = (context, callback) ->
+  # if the request should not be executed now, but instead queued we'll simply
+  # skip this (stat collection) step
+  return callback(null, context) if context.enqueueQueryRequest
   stats = context.Stats
   stats.executionTimeInMillis = stats.endDate.getTime() - stats.startDate.getTime()
   core.QueryStats.buffer.store stats
@@ -232,7 +251,7 @@ queryRequestHandler = (context) ->
     renderTemplate,
     testExecutionPermissions,
     logToScreamer,
-    executeQuery,
+    executeQueryIfSycnhronous,
     collectStats
   ],
   (err, results) ->
