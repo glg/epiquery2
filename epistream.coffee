@@ -1,6 +1,10 @@
 #! /usr/bin/env ./node_modules/.bin/coffee
 # vim:ft=coffee
 
+bodyParser = require 'body-parser'
+serveStatic = require 'serve-static'
+serveFavicon = require 'serve-favicon'
+errorHandler = require 'errorhandler'
 cluster   = require 'cluster'
 express   = require 'express'
 _         = require 'underscore'
@@ -17,11 +21,12 @@ queryRequestHandler = require('./src/request.coffee').queryRequestHandler
 
 
 app = express()
-app.use express.favicon()
-app.use express.bodyParser()
-app.use '/static', express.static(path.join(__dirname, 'static'))
+app.use serveFavicon(path.join(__dirname, 'static', 'favicon.ico'))
+app.use bodyParser.json()
+app.use bodyParser.urlencoded()
+app.use '/static', serveStatic(path.join(__dirname, 'static'))
 app.use app.router
-app.use express.errorHandler()
+app.use errorHandler()
 
 apiKey = config.epistreamApiKey
 
