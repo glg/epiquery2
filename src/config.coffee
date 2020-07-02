@@ -10,8 +10,9 @@ transform_config = (options) ->
   if !options.authentication
     options.authentication =
       type: 'default'
-      password: options.config.password
-      userName: options.config.userName
+      options:
+        password: options.config.password
+        userName: options.config.userName or options.config.user
   return options
 
 CONNECTION_VAR_NAMES=process.env.CONNECTIONS ||
