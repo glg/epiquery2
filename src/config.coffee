@@ -6,13 +6,14 @@ hack_tilde = (path) ->
   path = path.replace(/^~/, process.env.HOME) if path
   return path
 
-transform_config = (config) ->
-  if !config.authentication
-    config.authentication =
+transform_config = (options) ->
+  if !options.config.authentication
+    options.config.authentication =
       type: 'default'
-      password: config.password
-      userName: config.userName
-  return config
+      options:
+        password: options.config.password
+        userName: options.config.userName or options.config.user
+  return options
 
 CONNECTION_VAR_NAMES=process.env.CONNECTIONS ||
   throw new Error("No connections specified")
