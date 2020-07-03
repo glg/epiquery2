@@ -7,8 +7,8 @@ hack_tilde = (path) ->
   return path
 
 transform_config = (options) ->
-  if !options.authentication
-    options.authentication =
+  if !options.config.authentication
+    options.config.authentication =
       type: 'default'
       options:
         password: options.config.password
