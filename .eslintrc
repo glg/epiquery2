@@ -1,0 +1,21 @@
+extends:
+  - airbnb
+  - plugin:coffee/airbnb
+
+overrides:
+  - files: ['*.coffee']
+    parser: eslint-plugin-coffee
+    rules:
+      coffee/no-multi-spaces: off
+
+plugins:
+  - coffee
+
+rules:
+  key-spacing: off
+  no-param-reassign: off
+
+# quiets React warning
+settings:
+  react:
+    version: '16'
