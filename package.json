@@ -39,6 +39,7 @@
     "xmla4js": "git+https://github.com/glg/xmla4js.git"
   },
   "scripts": {
+    "lint": "make lint",
     "start": "make start",
     "watch": "make watch"
   },
