@@ -10,6 +10,8 @@ jobs:
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '12.3.1'
+      # This check is aspirational. It will fail until we get things properly up to snuff.
+      # - run: make lint
       - name: Update hosts file
         run: echo '127.0.0.1 mssql mysql sfdc' | sudo tee --append /etc/hosts
       - name: pull images
