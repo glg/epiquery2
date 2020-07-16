@@ -1,4 +1,4 @@
-FROM node:12.3.1-alpine
+FROM node:14.5.0-alpine
 
 # adding our node_modules bin to the path so we can reference installed packages
 # without installing them globally
