@@ -26,8 +26,8 @@ jobs:
           DIFFTEST_QUIET: false
           ENABLE_TEMPLATE_ACLS: DISABLED
           EPI_C_FILE: '{"driver":"file","config":{},"name":"file"}'
-          EPI_C_MSSQL: '{"driver":"mssql","name":"mssql","config":{"server":"mssql","password":"YourV3ryStrong!Passw0rd","userName":"SA","options":{"port":1433, "requestTimeout":0}}}'
-          EPI_C_MSSQL_O: '{"driver":"mssql_o","name":"mssql_o","config":{"server":"mssql","password":"YourV3ryStrong!Passw0rd","userName":"SA","options":{"port":1433, "requestTimeout":0}}}'
+          EPI_C_MSSQL: '{"driver":"mssql","name":"mssql","config":{"server":"mssql","password":"YourV3ryStrong!Passw0rd","userName":"SA","options":{"port":1433, "requestTimeout":0, "trustServerCertificate": true}}}'
+          EPI_C_MSSQL_O: '{"driver":"mssql_o","name":"mssql_o","config":{"server":"mssql","password":"YourV3ryStrong!Passw0rd","userName":"SA","options":{"port":1433, "requestTimeout":0, "trustServerCertificate": true}}}'
           EPI_C_MYSQL: '{"name":"mysql","driver":"mysql","config":{"host":"mysql","user":"root","password":"mysql_root_password"}}'
           EPI_C_MYSQL_BULK: '{"name":"mysql_bulk", "type":"bulk","driver":"mysql","config":{"host":"mysql","user":"root","password":"mysql_root_password"}}'
           EPI_C_RENDER: '{"driver":"render","config":{},"name":"render"}'
