@@ -17,8 +17,9 @@ queryRequestHandler = require('./src/request.coffee').queryRequestHandler
 
 
 app = express()
-app.use express.json()
-app.use express.urlencoded({ extended: false })
+# based on https://stackoverflow.com/a/19965089/2733
+app.use express.json({ limit: '26mb' })
+app.use express.urlencoded({ extended: true, limit: '26mb', parameterLimit: 5000 })
 app.use '/static', express.static(path.join(__dirname, 'static'))
 
 apiKey = config.epistreamApiKey
@@ -69,9 +70,11 @@ app.get '/stats', (req, res) ->
   res.send stats
 
 httpRequestHandler = (req, res) ->
-  clientId = req.param 'client_id'
   c = new Context()
-  c.queryId = req.param 'queryId'
+  # there are no tests for req.params.queryId, but the implementation is based on
+  # the documentation for the deprecated request.params() method:
+  # http://expressjs.com/en/api.html#req.param
+  c.queryId = req.params.queryId || req.body?.queryId || req.query.queryId
   _.extend c, httpClient.getQueryRequestInfo(req, !!apiKey)
   # Check that the client supplied key matches server key
   if apiKey
