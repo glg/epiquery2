@@ -42,20 +42,50 @@
         {
             "done" : true,
             "length" : 1,
-            "records" : 
-            [ 
-                {  
-                    "attributes" : 
-                    {    
-                        "type" : "Subscription__c",    
-                        "url" : "/services/data/version/sobjects/Subscription__c/a0AU0000019hqdGMAQ"  
-                    },  
+            "records" :
+            [
+                {
+                    "attributes" :
+                    {
+                        "type" : "Subscription__c",
+                        "url" : "/services/data/version/sobjects/Subscription__c/a0AU0000019hqdGMAQ"
+                    },
                     "Subscription_Id__c": "SUB-905822",
                     "Start_Date__c": "2015-08-01",
                     "Expiry_Date__c": "2016-01-31",
                     "IsUsageBased__c": false,
                     "Subscription_Revenue_Type__c": "Non-Unit Based",
-                    "Subscription_Type__c": "OSP"                
+                    "Subscription_Type__c": "OSP"
                 }
             ]
+        }
+
+# GET /services/data/v33.0/query?q=SELECT%0A%20%20Subscription_Id__c%2C%0A%20%20Start_Date__c%2C%0A%20%20Expiry_Date__c%2C%0A%20%20IsUsageBased__c%2C%0A%20%20Subscription_Revenue_Type__c%2C%0A%20%20Subscription_Type__c%0AFROM%20Subscription__c%0AWHERE%20Id%20%3D%20%27retryid%27%0A
++ Response 200 (application/json)
+
+        {
+            "done" : true,
+            "length" : 1,
+            "records" :
+            [
+                {
+                    "attributes" :
+                    {
+                        "type" : "Subscription__c",
+                        "url" : "/services/data/version/sobjects/Subscription__c/a0AU0000019hqdGMAQ"
+                    },
+                    "Subscription_Id__c": "SUB-905822",
+                    "Start_Date__c": "2015-08-01",
+                    "Expiry_Date__c": "2016-01-31",
+                    "IsUsageBased__c": false,
+                    "Subscription_Revenue_Type__c": "Non-Unit Based",
+                    "Subscription_Type__c": "OSP"
+                }
+            ]
+        }
+
++ Response 500 (application/json)
+
+        {
+          "error": true
         }
