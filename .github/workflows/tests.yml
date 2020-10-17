@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/setup-node@v2.1.2
         with:
-          node-version: '14.6.0'
+          node-version: 14.14.0
       - name: Update hosts file
         run: echo '127.0.0.1 mssql mysql sfdc' | sudo tee --append /etc/hosts
       - name: pull images
