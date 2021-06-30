@@ -6,6 +6,15 @@ hack_tilde = (path) ->
   path = path.replace(/^~/, process.env.HOME) if path
   return path
 
+transform_config = (options) ->
+  if !options.config.authentication
+    options.config.authentication =
+      type: 'default'
+      options:
+        password: options.config.password
+        userName: options.config.userName or options.config.user
+  return options
+
 CONNECTION_VAR_NAMES=process.env.CONNECTIONS ||
   throw new Error("No connections specified")
 TEMPLATE_DIRECTORY=hack_tilde(process.env.TEMPLATE_DIRECTORY ||
@@ -24,11 +33,11 @@ HTTP_REQUEST_TIMEOUT_IN_SECONDS=process.env.HTTP_REQUEST_TIMEOUT_IN_SECONDS || 1
 
 for conn_name in CONNECTION_VAR_NAMES.split(" ")
   try
-    conn_o = JSON.parse(process.env[conn_name])    
+    conn_o = JSON.parse(process.env[conn_name])
   catch e
     log.error "Unable to parse env var #{conn_name} as connection: #{process.env[conn_name]}"
     throw e
-  CONNECTIONS[conn_o.name] = conn_o
+  CONNECTIONS[conn_o.name] = transform_config(conn_o)
 
 # if ALLOWED_TEMPLATES exists, it serves as our whitelist for template execution
 # which means any template that is to be allowed to execute must be
